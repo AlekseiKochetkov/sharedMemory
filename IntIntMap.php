@@ -40,15 +40,17 @@ class IntIntMap
         // получить и вернуть предыдущее значение
 
         //v2
-        //считать всё
-        //получить длину записанного
-        //  заодно получить последний кусок
-        //дописать в конец
+        $parsedData = $this->getParsedData();
+        //ToDo: get last value here
+        $lastValue = $parsedData[array_key_last($parsedData)];
+        $parsedData[$key] = $value;
+        $preparedString = $this->prepareValues($parsedData);
+        if(strlen($preparedString)>$this->size){
+            throw new Exception('Out of memory. Unable to write');
+        }
+        shmop_write($this->shm_id, $this->prepareValues($parsedData), 0);
 
-        $rawData = shmop_read($this->shm_id, 0, $this->size);
-        shmop_write($this->shm_id, $this->prepareValue($key,$value), strlen($rawData));
-
-        return $value;
+        return $lastValue;//??
     }
 
     /**
@@ -63,12 +65,7 @@ class IntIntMap
         //прочитать из памяти, изи
 
         //v2
-        //считать всё
-        // распарсить
-        //получить нужное
-        $parsedData = $this->parse(
-            shmop_read($this->shm_id, 0, $this->size)
-        );
+        $parsedData = $this->getParsedData();
         if (
             null !== $parsedData
             && array_key_exists($key, $parsedData)
@@ -77,6 +74,11 @@ class IntIntMap
         }
 
         return null;
+    }
+
+    private function getParsedData(): array
+    {
+        return $this->parse(shmop_read($this->shm_id, 0, $this->size));
     }
 
     private function parse(string $wholeData): array
@@ -97,7 +99,19 @@ class IntIntMap
         return null;
     }
 
-    private function prepareValue(int $key, int $value): string
+    private function prepareValues(array $parsedData): string
+    {
+        return implode(
+            ';',
+            array_map(
+                [$this, 'prepareSingleKeyValuePair'],
+                array_keys($parsedData),
+                $parsedData
+            )
+        );
+    }
+
+    private function prepareSingleKeyValuePair(int $key, int $value): string
     {
         return $key.':'.$value;
     }
