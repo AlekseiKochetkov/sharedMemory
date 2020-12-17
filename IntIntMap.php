@@ -33,7 +33,7 @@ class IntIntMap
     {
         //v1
         //проверять что осталось место в выделенной памяти
-//        shmop_write($this->shm_id, $value, $this->getSharedMemoryPlace($key));
+        //        shmop_write($this->shm_id, $value, $this->getSharedMemoryPlace($key));
         // надо сохранить пару  ключ\значение
         // по ключу надо определять место в памяти куда записано
         // где хранить ссылку ключа на память?
