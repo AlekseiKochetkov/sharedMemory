@@ -46,7 +46,7 @@ class IntIntMap
         //дописать в конец
 
         $rawData = shmop_read($this->shm_id, 0, $this->size);
-        shmop_write($this->shm_id, $this->prepareValue($value), strlen($rawData));
+        shmop_write($this->shm_id, $this->prepareValue($key,$value), strlen($rawData));
 
         return $value;
     }
