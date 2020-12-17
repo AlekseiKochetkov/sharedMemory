@@ -41,7 +41,6 @@ class IntIntMap
 
         //v2
         $parsedData = $this->getParsedData();
-        //ToDo: get last value here
         $lastValue = $parsedData[array_key_last($parsedData)];
         $parsedData[$key] = $value;
         $preparedString = $this->prepareValues($parsedData);
