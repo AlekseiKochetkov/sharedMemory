@@ -5,10 +5,16 @@ declare(strict_types=1);
 
 final class IntIntMapV2 implements IntIntMapInterface
 {
-    private resource $shm_id;
+    /**
+     * @var resource
+     */
+    private $shm_id;
 
     private int $size;
 
+    /**
+     * @param resource $shm_id
+     */
     public function __construct($shm_id, int $size)
     {
         $this->shm_id = $shm_id;

@@ -9,7 +9,10 @@
  */
 class IntIntMap implements IntIntMapInterface
 {
-    private resource $shm_id;
+    /**
+     * @var resource
+     */
+    private $shm_id;
 
     private int $size;
 
@@ -18,7 +21,7 @@ class IntIntMap implements IntIntMapInterface
      * @param resource $shm_id результат вызова \shmop_open
      * @param int $size размер зарезервированного блока в разделяемой памяти
      */
-    public function __construct(resource $shm_id, int $size)
+    public function __construct($shm_id, int $size)
     {
         $this->shm_id = $shm_id;
         $this->size = $size;
