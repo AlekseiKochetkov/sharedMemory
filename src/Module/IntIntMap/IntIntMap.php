@@ -44,7 +44,7 @@ class IntIntMap implements IntIntMapInterface
         if (strlen($preparedString) > $this->size) {
             throw new Exception('Out of memory. Unable to write');
         }
-        shmop_write($this->shm_id, $this->prepareValues($parsedData), 0);
+        shmop_write($this->shm_id, $preparedString, 0);
 
         return $lastValue;//??
     }
@@ -69,8 +69,11 @@ class IntIntMap implements IntIntMapInterface
     private function getParsedData(): array
     {
         $parsedData = $this->parse(shmop_read($this->shm_id, 0, $this->size));
-//        if(null != $parsedData)
-        return array_merge(...$parsedData);
+        if (null != $parsedData && count($parsedData) > 1) {
+            return array_replace(...$parsedData);
+        }
+
+        return $parsedData;
     }
 
     private function parse(string $wholeData): array

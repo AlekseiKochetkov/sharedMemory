@@ -11,7 +11,7 @@ final class IntIntMapTest extends TestCase
     private const SIZE = 50;
     private const KEY = 5;
     private const VALUE = 7;
-    private const SHMOP_KEY = 1;
+    private const SHMOP_KEY = 8;
 
     /**
      * @var resource|null
@@ -21,19 +21,50 @@ final class IntIntMapTest extends TestCase
     /**
      * @test
      */
+    public function put(): void
+    {
+        $instance = $this->createInstance();
+
+        $result = $instance->put(self::KEY, self::VALUE);
+
+        self::assertNull($result);
+    }
+
+    /**
+     * @test
+     * @depends put
+     */
     public function get(): void
     {
         $instance = $this->createInstance();
 
-        $instance->put(self::KEY, self::VALUE);
         $result = $instance->get(self::KEY);
 
         self::assertEquals(self::VALUE, $result);
     }
 
-    protected function tearDown(): void
+    /**
+     * @test
+     * @depends put
+     */
+    public function putAnother(): void
     {
-        parent::tearDown();
+        $instance = $this->createInstance();
+
+        $result = $instance->put(self::KEY, self::VALUE);
+
+        self::assertEquals(self::VALUE, $result);
+    }
+
+    /**
+     * @test
+     * @depends put
+     * @depends get
+     * @depends putAnother
+     * @doesNotPerformAssertions
+     */
+    public function customTearDown(): void
+    {
         shmop_delete($this->createShmop());
     }
 
@@ -50,11 +81,15 @@ final class IntIntMapTest extends TestCase
      */
     private function createShmop()
     {
-        return $this->shmop ?? shmop_open(
+        if (null === $this->shmop) {
+            $this->shmop = shmop_open(
                 self::SHMOP_KEY,
                 'c',
                 0644,
                 self::SIZE
             );
+        }
+
+        return $this->shmop;
     }
 }
