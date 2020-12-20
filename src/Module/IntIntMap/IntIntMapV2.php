@@ -38,5 +38,4 @@ final class IntIntMapV2 implements IntIntMapInterface
         //узнать длину числа, т.к. в памяти хранятся только строчные данные
         //прочитать из памяти, изи
     }
-
 }
