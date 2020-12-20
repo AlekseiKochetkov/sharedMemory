@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Module\IntIntMap;
+
+use Exception;
 
 /**
  * Требуется написать IntIntMap который по произвольному int ключу хранить произвольное int значение
@@ -38,7 +41,7 @@ class IntIntMap implements IntIntMapInterface
         $lastValue = $parsedData[array_key_last($parsedData)];
         $parsedData[$key] = $value;
         $preparedString = $this->prepareValues($parsedData);
-        if(strlen($preparedString)>$this->size){
+        if (strlen($preparedString) > $this->size) {
             throw new Exception('Out of memory. Unable to write');
         }
         shmop_write($this->shm_id, $this->prepareValues($parsedData), 0);
@@ -65,22 +68,24 @@ class IntIntMap implements IntIntMapInterface
 
     private function getParsedData(): array
     {
-        return $this->parse(shmop_read($this->shm_id, 0, $this->size));
+        $parsedData = $this->parse(shmop_read($this->shm_id, 0, $this->size));
+//        if(null != $parsedData)
+        return array_merge(...$parsedData);
     }
 
     private function parse(string $wholeData): array
     {
         return array_map(
-            [$this, 'createKeyValuePair'],
+            [$this, 'parseKeyValuePair'],
             explode(';', $wholeData)
         );
     }
 
-    private function createKeyValuePair(string $chunk): ?array
+    private function parseKeyValuePair(string $chunk): ?array
     {
         $subStrings = explode(':', $chunk);
         if (count($subStrings) === 2) {
-            return [$subStrings[0] => $subStrings[1]];
+            return [(int)$subStrings[0] => (int)$subStrings[1]];
         }
 
         return null;
@@ -98,8 +103,13 @@ class IntIntMap implements IntIntMapInterface
         );
     }
 
-    private function prepareSingleKeyValuePair(int $key, int $value): string
+    private function prepareSingleKeyValuePair(int $key, ?int $value): string
     {
         return $key.':'.$value;
+    }
+
+    public function __destruct()
+    {
+        shmop_close($this->shm_id);
     }
 }

@@ -11,9 +11,11 @@
         "symfony/dotenv": "5.2.*",
         "symfony/flex": "^1.3.1",
         "symfony/framework-bundle": "5.2.*",
-        "symfony/yaml": "5.2.*"
+        "symfony/yaml": "5.2.*",
+        "ext-shmop": "*"
     },
     "require-dev": {
+        "phpunit/phpunit": "^9.5"
     },
     "config": {
         "optimize-autoloader": true,

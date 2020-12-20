@@ -2,13 +2,17 @@
 
 declare(strict_types=1);
 
+namespace App\Module\IntIntMapFactory;
+
+use App\Module\IntIntMap\IntIntMap;
+use App\Module\IntIntMap\IntIntMapInterface;
 
 final class IntIntMapFactory implements IntIntMapFactoryInterface
 {
     public function create(int $size): IntIntMapInterface
     {
         return new IntIntMap(
-            shmop_open($this->createKey(), "w", 0600, $size),
+            shmop_open($this->createKey(), "c", 0600, $size),
             $size
         );
     }
